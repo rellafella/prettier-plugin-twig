@@ -25,8 +25,11 @@ const parsers = {
     twig: {
         parse,
         astFormat: "twig",
-        hasPragma() {
-            return false;
+        hasPragma(text) {
+            return (
+                text.startsWith("{# @prettier #}") ||
+                text.startsWith("{# @format #}")
+            );
         },
         locStart() {
             return -1;
@@ -66,6 +69,9 @@ const printers = {
         },
         willPrintOwnComments() {
             return true;
+        },
+        insertPragma(text) {
+            return `{# @prettier #}\n${text}`;
         }
     }
 };
