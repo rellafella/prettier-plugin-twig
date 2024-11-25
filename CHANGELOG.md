@@ -3,6 +3,118 @@
 ## unreleased
 
 ---
+## 0.12.0 (2024-11-22)
+
+> [!IMPORTANT]
+> Yet another breaking changes. See release notes or changelog before upgrading.
+
+### BREAKING CHANGES
+- Option `twigPrintWidth` has been removed
+
+I don't see any reason why we should keep the option `twigPrintWidth`. Prettier provide mechanism to use different `printWidth` for different file types by using _override_ (see example below).
+
+__What to do?__
+
+Remove `twigPrintWidth` from your prettier config and use [override](https://prettier.io/docs/en/configuration.html#configuration-overrides) instead.
+
+__Example__
+```diff
+  # ./.prettierrc.yaml
+- twigPrintWidth: 120
++ overrides:
++   - files: "*.twig"
++     options:
++       printWidth: 120
+```
+
+### Features
+- Add support for spread operator
+
+__Example__
+```twig
+<twig:Component {{ ...vars }} />
+
+{% set numbers = [1, 2, ...moreNumbers] %}
+{% set ratings = {'q1': 10, 'q2': 5, ...moreRatings} %}
+
+{{ 'Hello %s %s!'|format(...['Fabien', 'Potencier']) }}
+```
+
+### Bugfixes
+- Make sure that empty block statement will have empty line in between for consistency
+
+---
+## 0.11.1 (2024-11-13)
+
+### Bugfixes
+- Fix handling empty string as default value on macros declaration
+
+---
+## 0.11.0 (2024-11-12)
+
+> [!IMPORTANT]
+> Twig coding standard has been updated to version 3.x. This contains BREAKING CHANGES.
+
+### BREAKING CHANGES
+This release contains breaking changes, check your setup before upgrading.
+Option `twigFollowOfficialCodingStandards` is set to `true` by default. If you're
+using twig version _3.11_ or older it will break your setup. Notable changes on
+twig coding standard on version 3.x is added support for using colon `:` as separator
+for argument names and values (which is enabled by default with this plugin).
+
+__Example__
+```twig
+{# Input #}
+{{ data|convert_encoding(from= 'iso-2022-jp', to: 'UTF-8') }}
+
+{# Before #}
+{{ data|convert_encoding(from = 'iso-2022-jp', to = 'UTF-8') }}
+
+{# After #}
+{{ data|convert_encoding(from: 'iso-2022-jp', to: 'UTF-8') }}
+```
+
+__What to do?__
+- If you want to upgrade this plugin, make sure that you're using twig version 3.12 or later
+- If you want to keep using older version of twig, you can set option `twigFollowOfficialCodingStandards` to false (your code style might become inconsistent)
+
+### Features
+- BREAKING CHANGES: Update twig coding standard to follow version 3.x
+
+---
+## 0.10.0 (2024-11-11)
+
+### Features
+- Add support for default value on macros
+- Add support for test expression `instance of`, feature of [Craft CMS](https://craftcms.com/docs/5.x/reference/twig/tests.html#instance-of)
+- Add support for colon as separators between argument names and values
+
+### Internals
+- Test with Node.js 22, current active lts version
+- Add smoke test to make sure that the plugin can be loaded properly
+
+---
+## 0.9.1 (2024-10-10)
+
+### Bugfixes
+- Fix importing lodash function syntax
+- Fix import template function from `@babel/template`
+
+---
+## 0.9.0 (2024-10-03)
+
+### Features
+- Add support for three-way-comparison operator (spaceship operator)
+
+### Bugfixes
+- Fix handling mapping that omit key part
+- Fix documentation about `twigAlwaysBreakObjects` option to reflect actual default value
+- Fix autoescape block which allow boolean value (`true` and `false`) as a valid escape type
+
+### Internals
+- Make `key` part of `ObjectProperty` type optional to support object declaration that omit key part
+
+---
 ## 0.8.0 (2024-08-09)
 
 ### Features

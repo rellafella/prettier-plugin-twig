@@ -7,7 +7,7 @@ Forked from [trivago/prettier-plugin-twig-melody](https://github.com/trivago/pre
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/zackad/prettier-plugin-twig-melody/ci.yaml?branch=master&style=for-the-badge&logo=github)
 ![GitHub License](https://img.shields.io/github/license/zackad/prettier-plugin-twig-melody?style=for-the-badge)
-![GitHub Release](https://img.shields.io/github/v/release/zackad/prettier-plugin-twig-melody?display_name=release&style=for-the-badge&logo=github)
+![NPM Version](https://img.shields.io/npm/v/%40zackad%2Fprettier-plugin-twig?style=for-the-badge&logo=npm)
 ![GitHub Tag](https://img.shields.io/github/v/tag/zackad/prettier-plugin-twig-melody?style=for-the-badge)
 
 ---
@@ -44,11 +44,7 @@ This Prettier plugin comes with some options that you can add to your Prettier c
 
 Values can be `true` or `false`. If `true`, single quotes will be used for string literals in Twig files.
 
-### twigPrintWidth (default: `80`)
-
-Because Twig files might have a lot of nesting, it can be useful to define a separate print width for Twig files. This can be done with this option. If it is not set, the standard `printWidth` option is used.
-
-### twigAlwaysBreakObjects (default: `false`)
+### twigAlwaysBreakObjects (default: `true`)
 
 If set to `true`, objects will always be wrapped/broken, even if they would fit on one line:
 

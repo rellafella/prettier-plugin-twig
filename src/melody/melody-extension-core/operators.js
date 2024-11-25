@@ -38,6 +38,13 @@ export const binaryOperators = [];
 export const tests = [];
 
 //region Unary Expressions
+export const SpreadExpression = createUnaryOperator(
+    "...",
+    "SpreadExpression",
+    // I can't find precedence reference for spread operator
+    // Ref: https://twig.symfony.com/doc/3.x/templates.html#operators
+    20
+);
 export const UnaryNotExpression = createUnaryOperator(
     "not",
     "UnaryNotExpression",
@@ -121,6 +128,12 @@ export const BinaryLessThanOrEqualExpression = createBinaryOperatorNode({
 export const BinaryGreaterThanOrEqualExpression = createBinaryOperatorNode({
     text: ">=",
     type: "BinaryGreaterThanOrEqualExpression",
+    precedence: 20,
+    associativity: LEFT
+});
+export const BinaryThreeWayComparisonExpression = createBinaryOperatorNode({
+    text: "<=>",
+    type: "BinaryThreeWayComparisonExpression",
     precedence: 20,
     associativity: LEFT
 });
@@ -323,6 +336,11 @@ export const TestEmptyExpression = createTest("empty", "TestEmptyExpression");
 export const TestIterableExpression = createTest(
     "iterable",
     "TestIterableExpression"
+);
+
+export const TestInstanceOfExpression = createTest(
+    "instance of",
+    "TestInstanceOfExpression"
 );
 //endregion
 

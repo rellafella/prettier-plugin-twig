@@ -52,6 +52,10 @@ const TAG = Symbol("TAG");
 const TEST = Symbol("TEST");
 
 export default class Parser {
+    /**
+     * @param {TokenStream} tokenStream
+     * @param {Object} options
+     */
     constructor(tokenStream, options) {
         this.tokens = tokenStream;
         this[UNARY] = {};
@@ -625,7 +629,7 @@ export default class Parser {
                 if (token.type === Types.LBRACE) {
                     node = this.matchArray();
                 } else if (token.type === Types.LBRACKET) {
-                    node = this.matchMap();
+                    node = this.matchMapping();
                 } else {
                     this.error(
                         {
@@ -751,7 +755,7 @@ export default class Parser {
         return array;
     }
 
-    matchMap() {
+    matchMapping() {
         const tokens = this.tokens;
         let token;
         const obj = new n.ObjectExpression();
@@ -760,11 +764,16 @@ export default class Parser {
         while (!tokens.test(Types.RBRACKET) && !tokens.test(Types.EOF)) {
             let computed = false;
             let key;
+
+            // find the key part of object property
             if (tokens.test(Types.STRING_START)) {
                 key = this.matchStringExpression();
                 if (!n.is(key, "StringLiteral")) {
                     computed = true;
                 }
+            } else if ((token = tokens.nextIf(Types.EXPRESSION_START))) {
+                key = this.matchExpression();
+                computed = true;
             } else if ((token = tokens.nextIf(Types.SYMBOL))) {
                 key = createNode(n.Identifier, token, token.text);
             } else if ((token = tokens.nextIf(Types.NUMBER))) {
@@ -773,20 +782,31 @@ export default class Parser {
                 key = this.matchExpression();
                 computed = true;
             } else {
-                this.error({
-                    title: "Invalid map key",
-                    pos: tokens.la(0).pos,
-                    advice:
-                        "Key must be a string, symbol or a number but was " +
-                        tokens.next()
-                });
+                // if none above check is matches, we can assume that key part is being omitted
+                // noop
             }
-            tokens.expect(Types.COLON);
-            const value = this.matchExpression();
-            const prop = new n.ObjectProperty(key, value, computed);
-            copyStart(prop, key);
-            copyEnd(prop, value);
-            obj.properties.push(prop);
+
+            // find the value part of object property
+            if (tokens.test(Types.COLON)) {
+                tokens.expect(Types.COLON);
+                const value = this.matchExpression();
+                const prop = new n.ObjectProperty(value, computed, key);
+                copyStart(prop, key);
+                copyEnd(prop, value);
+                obj.properties.push(prop);
+            } else {
+                // when the part is missing, we can assume that it is being omitted
+                if (key === undefined) {
+                    computed = true;
+                    key = this.matchExpression();
+                }
+                const value = key;
+                const prop = new n.ObjectProperty(value, computed);
+                copyStart(prop, key);
+                copyEnd(prop, value);
+                obj.properties.push(prop);
+            }
+
             if (!tokens.test(Types.RBRACKET)) {
                 tokens.expect(Types.COMMA);
                 // support trailing comma
@@ -935,7 +955,8 @@ export default class Parser {
                 args.push(arrowFunction);
             } else if (
                 tokens.test(Types.SYMBOL) &&
-                tokens.lat(1) === Types.ASSIGNMENT
+                (tokens.lat(1) === Types.ASSIGNMENT ||
+                    tokens.lat(1) === Types.COLON)
             ) {
                 // OPTION 2: named filter argument(s)
                 const name = tokens.next();

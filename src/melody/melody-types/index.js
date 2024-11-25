@@ -195,9 +195,14 @@ type(NullLiteral, "NullLiteral");
 alias(NullLiteral, "Expression", "Literal", "Immutable");
 
 export class Identifier extends Node {
-    constructor(name) {
+    /**
+     * @param name
+     * @param {ConstantValue|undefined} value
+     */
+    constructor(name, value = undefined) {
         super();
         this.name = name;
+        this.value = value;
     }
 }
 type(Identifier, "Identifier");
@@ -353,14 +358,14 @@ visitor(ObjectExpression, "properties");
 
 export class ObjectProperty extends Node {
     /**
-     * @param {Node} key
-     * @param {Node} value
-     * @param {boolean} computed
+     * @param {Node} value          Actual object property value
+     * @param {boolean} computed    Whether or not the Node require additional processing
+     * @param {Node|null} [key]     Optional that would allow omitting key part
      */
-    constructor(key, value, computed) {
+    constructor(value, computed, key = null) {
         super();
-        this.key = key;
         this.value = value;
+        this.key = key;
         this.computed = computed;
     }
 }

@@ -38,6 +38,12 @@ describe("Expressions", () => {
         });
         await expect(actual).toMatchFileSnapshot(snapshotFile);
     });
+    it("should handle mapping expressions", async () => {
+        const { actual, snapshotFile } = await run_spec(import.meta.url, {
+            source: "mappingExpression.twig"
+        });
+        await expect(actual).toMatchFileSnapshot(snapshotFile);
+    });
     it("should handle member expressions", async () => {
         const { actual, snapshotFile } = await run_spec(import.meta.url, {
             source: "memberExpression.twig"
@@ -56,6 +62,17 @@ describe("Expressions", () => {
         });
         await expect(actual).toMatchFileSnapshot(snapshotFile);
     });
+
+    it("should handle spread operators", async () => {
+        const { actual, snapshotFile } = await run_spec(import.meta.url, {
+            source: "spread_operator.twig",
+            formatOptions: {
+                twigAlwaysBreakObjects: false
+            }
+        });
+        await expect(actual).toMatchFileSnapshot(snapshotFile);
+    });
+
     it("should handle string concatenation", async () => {
         const { actual, snapshotFile } = await run_spec(import.meta.url, {
             source: "stringConcat.twig"

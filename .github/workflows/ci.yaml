@@ -16,7 +16,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                node_version: [ 18, 20 ]
+                node_version: [ 18, 20, 22 ]
 
         steps:
             -   name: Checkout
@@ -39,3 +39,6 @@ jobs:
 
             -   name: Run Test
                 run: yarn test
+
+            -   name: Run smoke test
+                run: yarn test-smoke
